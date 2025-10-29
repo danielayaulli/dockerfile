@@ -1,36 +1,21 @@
-# Utiliza una imagen base de Python 3.11
-FROM python:3.11.0-slim
-
-RUN pip install pip==24.0
-RUN pip install setuptools==69.0.3
- 
-# Instala paquete para oracle client
-RUN apt-get update && apt-get install -y libaio1 
-
-# Ruta de instalación del cliente de oracle
-RUN mkdir -p /opt/oracle
-
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
-
-# Copia el archivo de requerimientos al contenedor
-COPY requirements.txt .
-
-# Instala las dependencias
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copia el código fuente de la aplicación al contenedor
-COPY . .
-
-# Configura el cliente de oracle
-RUN unzip /app/src/app/opt/instantclient-basic-linux.x64-11.2.0.4.0.zip -d /opt/oracle
-
-RUN sh -c "echo /opt/oracle/instantclient_11_2 > /etc/ld.so.conf.d/oracle-instantclient.conf"
-RUN ldconfig
-RUN export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2:$LD_LIBRARY_PATH
-
-# Eposición del puerto donde se ejecuta el app
-EXPOSE 8501
-
-# Comando para inicializar el app
-CMD ["streamlit", "run", "src/app/app.py"]
+# 1. Crear organización y repositorio público en github
+Ejemplo: https://github.com/juantovarg-ops/app-docker-st
+# 2. Crear aplicación y/o programa en python
+Ejemplo: https://github.com/juantovarg-ops/app-docker-st/blob/main/app.py
+# 3. Crear requirements.txt
+Ejemplo: https://github.com/juantovarg-ops/app-docker-st/blob/main/requirements.txt
+# 4. Crear Dockerfile
+Ejemplo: https://github.com/juantovarg-ops/app-docker-st/blob/main/Dockerfile
+# 5. Clonar repositorio
+git clone https://github.com/juantovarg-ops/app-docker-st.git
+# 6. Cambiar de directorio
+cd app-docker-st
+# 7. Construir la imagen
+docker build -t st-app .
+# 8. Ejecutar el contenedor
+docker run -d -p 8501:8501 --name mi-st-app st-app
+# 9. Verificar que está corriendo
+docker ps
+# 10. Ver logs (opcional)
+docker logs mi-st-app
+#11. Acceder en el navegador: “OPEN PORT” ingresar 8501
